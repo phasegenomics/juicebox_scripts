@@ -8,6 +8,7 @@ We provide these scripts in the hope that they are helpful to others in interact
 These examples require:
 
 * Linux OS
+* Python 2 (no support currently for Python 3)
 * [3d-dna](https://github.com/theaidenlab/3d-dna)
 * [matlock](https://github.com/phasegenomics/matlock)
 
