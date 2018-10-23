@@ -27,9 +27,9 @@ def getContigBinFromLine(line):
 
 
 def main():
-	if len(sys.argv) != 2:
-    	printUsage()
-	    sys.exit()
+    if len(sys.argv) != 3:
+        printUsage()
+        sys.exit()
 
     fname = sys.argv[1]
     outfile = sys.argv[2]
