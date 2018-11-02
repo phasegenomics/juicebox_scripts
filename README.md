@@ -1,5 +1,7 @@
 # Juicebox utilities
 
+![FP logo](https://github.com/phasegenomics/juicebox_scripts/blob/master/logo/BlueLogoHorSmall.png)
+
 This repo includes a set of scripts that we use in the course of interacting with the [Juicebox tool](http://aidenlab.org/juicebox/). Juicebox is helpful for visualizing and manually editing assemblies based on Hi-C data.
 
 We provide these scripts in the hope that they are helpful to others in interacting with Hi-C data. 
