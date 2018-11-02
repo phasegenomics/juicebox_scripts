@@ -2,12 +2,14 @@
 # converts agp format to assembly format (useful for juicebox)
 # requires exactly 2 inputs, writes to stdout
 
+from __future__ import print_function
+
 import sys
 from collections import defaultdict
 
 def printUsage():
-    print "\nmakeAgpFromFasta.py usage:"
-    print "\tmakeAgpFromFasta.py <apg_file> <assembly_file>\n"
+    print("\nmakeAgpFromFasta.py usage:", end='')
+    print("\tmakeAgpFromFasta.py <apg_file> <assembly_file>")
     return
 
 def read_from_agp(filename):

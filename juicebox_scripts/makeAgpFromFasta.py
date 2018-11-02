@@ -3,11 +3,12 @@
 #a fasta file to print contig lengths
 #writes results to stdout
 
+from __future__ import print_function
 import sys
 
 def printUsage():
-    print "\nmakeAgpFromFasta.py usage:"
-    print "\tmakeAgpFromFasta.py <fasta_file> <agp_out_file>\n"
+    print("\nmakeAgpFromFasta.py usage:", end='')
+    print("\tmakeAgpFromFasta.py <fasta_file> <agp_out_file>")
     return
 
 #this funtion returns true if line is a contig+bin line
