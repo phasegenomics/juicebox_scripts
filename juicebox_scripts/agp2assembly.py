@@ -8,8 +8,8 @@ import sys
 from collections import defaultdict
 
 def printUsage():
-    print("\nmakeAgpFromFasta.py usage:", end='')
-    print("\tmakeAgpFromFasta.py <apg_file> <assembly_file>")
+    print("\nagp2assembly.py usage:", end='')
+    print("\tagp2assembly.py <input_agp_file> <output_assembly_file>")
     return
 
 def read_from_agp(filename):

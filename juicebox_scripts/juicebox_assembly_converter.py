@@ -699,10 +699,10 @@ if __name__ == '__main__':
                         'Default: the assembly file, minus the file extension', default=None)
     parser.add_argument('-c', '--contig_mode', action='store_true', help='ignore scaffold '\
                         'specification and just output contigs. useful when only trying to '\
-                        'obtain a fasta reflecting juicebox breaks. Default: %s(default)',
+                        'obtain a fasta reflecting juicebox breaks. Default: %(default)s',
                         default=False)
     parser.add_argument('-v', '--verbose', action='store_false', help='print summary of '\
-                        'processing steps to stdout, otherwise silent. Default: %s(default)',
+                        'processing steps to stdout, otherwise silent. Default: %(default)s',
                         default=True)
     args = parser.parse_args()
     
