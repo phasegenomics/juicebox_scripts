@@ -1,4 +1,4 @@
-#!usr/bin/python
+#!/usr/bin/env python
 '''
 Shawn Sullivan
 October 31, 2018

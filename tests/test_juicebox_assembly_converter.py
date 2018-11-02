@@ -1,4 +1,4 @@
-#!usr/bin/python
+#!/usr/bin/env python
 '''
 Shawn Sullivan
 October 31, 2018
@@ -34,8 +34,8 @@ import unittest
 #import sys
 # sys.path.append('src/')
 # sys.path.append('../src/')
-from juicebox_assembly_converter import JuiceboxConverter, ProcessedAssembly
-from juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, UnscaffoldedContigError, ZeroLengthContigError 
+from juicebox_scripts.juicebox_assembly_converter import JuiceboxConverter, ProcessedAssembly
+from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, UnscaffoldedContigError, ZeroLengthContigError 
 
 class JuiceboxConverterTestCase(unittest.TestCase):
     def setUp(self):
@@ -45,7 +45,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.test_output_bed = 'test_output.bed'
         self.test_output_break_report = 'test_output.break_report.txt'
         
-        self.collateral_dir = 'test/collateral/'
+        self.collateral_dir = os.path.dirname(__file__) + '/collateral/'
         self.test_file_dir = self.collateral_dir + 'test_inputs/'
         self.test_bad_fasta_1 = self.test_file_dir + 'test_bad_1.fasta'
         self.test_bad_fasta_2 = self.test_file_dir + 'test_bad_2.fasta'
