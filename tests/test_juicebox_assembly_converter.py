@@ -86,39 +86,43 @@ class JuiceboxConverterTestCase(unittest.TestCase):
             os.remove(self.test_output_bed)
         if os.path.exists(self.test_output_break_report):
             os.remove(self.test_output_break_report)
+    
+    def read_file_lines(self, fname):
+        with open(fname) as f:
+            return f.readlines()
 
     def test_make_contigs(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
-        expected_contigs_fasta = open(self.expected_result_contigs_fasta).readlines()
-        expected_contigs_agp = open(self.expected_result_contigs_agp).readlines()
-        expected_contigs_bed = open(self.expected_result_contigs_bed).readlines()
+        expected_contigs_fasta = self.read_file_lines(self.expected_result_contigs_fasta)
+        expected_contigs_agp = self.read_file_lines(self.expected_result_contigs_agp)
+        expected_contigs_bed = self.read_file_lines(self.expected_result_contigs_bed)
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
     
     def test_make_scaffolds(self):
         scaffolds = self.converter.process(self.test_fasta, self.test_scaffolds_assembly)
-        expected_scaffolds_fasta = open(self.expected_result_scaffolds_fasta).readlines()
-        expected_scaffolds_agp = open(self.expected_result_scaffolds_agp).readlines()
-        expected_scaffolds_bed = open(self.expected_result_scaffolds_bed).readlines()
+        expected_scaffolds_fasta = self.read_file_lines(self.expected_result_scaffolds_fasta)
+        expected_scaffolds_agp = self.read_file_lines(self.expected_result_scaffolds_agp)
+        expected_scaffolds_bed = self.read_file_lines(self.expected_result_scaffolds_bed)
         self.assertEqual(scaffolds.fasta(), expected_scaffolds_fasta)
         self.assertEqual(scaffolds.agp(), expected_scaffolds_agp)
         self.assertEqual(scaffolds.bed(), expected_scaffolds_bed)
     
     def test_make_breaks(self):
         breaks = self.converter.process(self.test_fasta, self.test_breaks_assembly)
-        expected_breaks_fasta = open(self.expected_result_breaks_fasta).readlines()
-        expected_breaks_agp = open(self.expected_result_breaks_agp).readlines()
-        expected_breaks_bed = open(self.expected_result_breaks_bed).readlines()
+        expected_breaks_fasta = self.read_file_lines(self.expected_result_breaks_fasta)
+        expected_breaks_agp = self.read_file_lines(self.expected_result_breaks_agp)
+        expected_breaks_bed = self.read_file_lines(self.expected_result_breaks_bed)
         self.assertEqual(breaks.fasta(), expected_breaks_fasta)
         self.assertEqual(breaks.agp(), expected_breaks_agp)
         self.assertEqual(breaks.bed(), expected_breaks_bed)
     
     def test_make_contigs_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly, contig_mode=True)
-        expected_contigs_fasta = open(self.expected_result_contigs_straight_fasta).readlines()
-        expected_contigs_agp = open(self.expected_result_contigs_straight_agp).readlines()
-        expected_contigs_bed = open(self.expected_result_contigs_straight_bed).readlines()
+        expected_contigs_fasta = self.read_file_lines(self.expected_result_contigs_straight_fasta)
+        expected_contigs_agp = self.read_file_lines(self.expected_result_contigs_straight_agp)
+        expected_contigs_bed = self.read_file_lines(self.expected_result_contigs_straight_bed)
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
@@ -126,30 +130,30 @@ class JuiceboxConverterTestCase(unittest.TestCase):
     def test_make_scaffolds_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_scaffolds_assembly, contig_mode=True)
         #the scaffolds assembly with no breaks should do the same thing as the contigs assembly
-        expected_contigs_fasta = open(self.expected_result_contigs_straight_fasta).readlines()
-        expected_contigs_agp = open(self.expected_result_contigs_straight_agp).readlines()
-        expected_contigs_bed = open(self.expected_result_contigs_straight_bed).readlines()
+        expected_contigs_fasta = self.read_file_lines(self.expected_result_contigs_straight_fasta)
+        expected_contigs_agp = self.read_file_lines(self.expected_result_contigs_straight_agp)
+        expected_contigs_bed = self.read_file_lines(self.expected_result_contigs_straight_bed)
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
     
     def test_make_breaks_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_breaks_assembly, contig_mode=True)
-        expected_contigs_fasta = open(self.expected_result_breaks_straight_fasta).readlines()
-        expected_contigs_agp = open(self.expected_result_breaks_straight_agp).readlines()
-        expected_contigs_bed = open(self.expected_result_breaks_straight_bed).readlines()
+        expected_contigs_fasta = self.read_file_lines(self.expected_result_breaks_straight_fasta)
+        expected_contigs_agp = self.read_file_lines(self.expected_result_breaks_straight_agp)
+        expected_contigs_bed = self.read_file_lines(self.expected_result_breaks_straight_bed)
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
     
     def test_no_breaks_break_report(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
-        expected_no_break_report = open(self.expected_result_contigs_broken_contigs_txt).readlines()
+        expected_no_break_report = self.read_file_lines(self.expected_result_contigs_broken_contigs_txt)
         self.assertEqual(contigs.break_report(), expected_no_break_report)
     
     def test_breaks_break_report(self):
         contigs = self.converter.process(self.test_fasta, self.test_breaks_assembly)
-        expected_break_report = open(self.expected_result_breaks_broken_contigs_txt).readlines()
+        expected_break_report = self.read_file_lines(self.expected_result_breaks_broken_contigs_txt)
         self.assertEqual(contigs.break_report(), expected_break_report)
     
     def test_write_fasta(self):
