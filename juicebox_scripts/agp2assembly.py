@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # converts agp format to assembly format (useful for juicebox)
 # requires exactly 2 inputs, writes to stdout
 

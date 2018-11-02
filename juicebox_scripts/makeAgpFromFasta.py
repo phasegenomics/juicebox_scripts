@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #requires exactly 2 inputs
 #a fasta file to print contig lengths
 #writes results to stdout
