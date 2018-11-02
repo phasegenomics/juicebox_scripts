@@ -1,0 +1,23 @@
+>contig_1_len_29::fragment_1 1 10
+>contig_1_len_29::fragment_2::debris 2 5
+>contig_1_len_29::fragment_3 3 14
+>contig_2_len_1 4 1
+>contig_3_len_1 5 1
+>contig_4_len_20 6 20
+>contig_5_len_25 7 25
+>contig_6_len_26::fragment_1 8 6
+>contig_6_len_26::fragment_2::debris 9 5
+>contig_6_len_26::fragment_3 10 6
+>contig_6_len_26::fragment_4::debris 11 5
+>contig_6_len_26::fragment_5 12 4
+>contig_7_len_25 13 25
+>contig_8_len_16 14 16
+>contig_9_len_64 15 64
+1 -4 5
+-3 6 9
+7 -8 -13
+10
+12 14
+-15
+2
+-11
