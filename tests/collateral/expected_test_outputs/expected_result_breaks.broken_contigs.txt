@@ -1,0 +1,10 @@
+#3 total breaks in 2 contigs
+#orig_contig	fragment	break_start	break_end	fragment_len
+contig_1_len_29	contig_1_len_29:::fragment_1	0	10	10
+contig_1_len_29	contig_1_len_29:::fragment_2:::debris	10	15	5
+contig_1_len_29	contig_1_len_29:::fragment_3	15	29	14
+contig_6_len_26	contig_6_len_26:::fragment_1	0	6	6
+contig_6_len_26	contig_6_len_26:::fragment_2:::debris	6	11	5
+contig_6_len_26	contig_6_len_26:::fragment_3	11	17	6
+contig_6_len_26	contig_6_len_26:::fragment_4:::debris	17	22	5
+contig_6_len_26	contig_6_len_26:::fragment_5	22	26	4
