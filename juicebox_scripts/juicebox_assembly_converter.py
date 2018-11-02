@@ -24,6 +24,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see https://www.gnu.org/licenses/agpl-3.0.en.html
 '''
+from __future__ import print_function
 
 import sys
 from _collections import defaultdict
@@ -68,18 +69,18 @@ class JuiceboxConverter:
                 inputs
         '''
         if verbose:
-            print 'Reading sequences from {0}...'.format(fasta)
+            print('Reading sequences from {0}...'.format(fasta))
         sequences = self._read_fasta(fasta, verbose=verbose)
         if verbose:
-            print 'Sequences read\n'
-            print 'Reading .assembly file {0}...'.format(assembly)
+            print('Sequences read\n')
+            print('Reading .assembly file {0}...'.format(assembly))
         assembly_map, scaffolds = self._read_assembly(assembly, contig_mode=contig_mode)
         if verbose:
-            print '.assembly read\n'
-            print 'Checking for breaks listed in .assembly and making them...'
+            print('.assembly read\n')
+            print('Checking for breaks listed in .assembly and making them...')
         sequences = self._add_breaks(sequences, assembly_map)
         if verbose:
-            print 'Break check complete\n'
+            print('Break check complete\n')
         return ProcessedAssembly(sequences, assembly_map, scaffolds)
     
     def _read_fasta(self, fasta, verbose=False):
@@ -108,10 +109,10 @@ class JuiceboxConverter:
                 if len(line) == 0:
                     continue
                 if verbose and read_count % 1000000 == 0:
-                    if dots_on_line == 20 and read_count > 0:
-                        print
+                    if dots_on_line == 40 and read_count > 0:
+                        print('')
                         dots_on_line = 0
-                    print '.',
+                    print('.', end='')
                     dots_on_line += 1
                     sys.stdout.flush()
                 read_count += 1
@@ -129,7 +130,7 @@ class JuiceboxConverter:
                      raise InvalidFastaError('Fasta {0} does not begin with a contig name'.format(fasta))
         sequences[active_seq] = ''.join(seq_list)
         if verbose and read_count % 200000 != 0 and read_count > 0:
-            print
+            print('')
         return sequences
     
     def _read_assembly(self, assembly, contig_mode=False):
@@ -287,7 +288,7 @@ class ProcessedAssembly:
                 steps to stdout. Otherwise silent. Default: False
         '''
         if verbose:
-            print 'Writing FASTA to {0}...'.format(outfile)
+            print('Writing FASTA to {0}...'.format(outfile))
             sys.stdout.flush()
         self._write_file(outfile, self.fasta(verbose=verbose), verbose=verbose)
     
@@ -300,7 +301,7 @@ class ProcessedAssembly:
                 steps to stdout. Otherwise silent. Default: False
         '''
         if verbose:
-            print 'Writing AGP to {0}...'.format(outfile)
+            print('Writing AGP to {0}...'.format(outfile))
             sys.stdout.flush()
         self._write_file(outfile, self.agp(), verbose=verbose)
     
@@ -313,7 +314,7 @@ class ProcessedAssembly:
                 steps to stdout. Otherwise silent. Default: False
         '''
         if verbose:
-            print 'Writing BED to {0}...'.format(outfile)
+            print('Writing BED to {0}...'.format(outfile))
             sys.stdout.flush()
         self._write_file(outfile, self.bed(), verbose=verbose)
     
@@ -327,7 +328,7 @@ class ProcessedAssembly:
                 steps to stdout. Otherwise silent. Default: False
         '''
         if verbose:
-            print 'Writing break report to {0}...'.format(outfile)
+            print('Writing break report to {0}...'.format(outfile))
             sys.stdout.flush()
         self._write_file(outfile, self.break_report(), verbose=verbose)
     
@@ -351,10 +352,10 @@ class ProcessedAssembly:
             seq = ''
             for contig in scaffold:
                 if verbose and contig_counter % (10 * (contig_only_print_scalar if len(scaffold) == 1 else 1)) == 0:
-                    if dots_on_line == 20 and contig_counter > 0:
+                    if dots_on_line == 40 and contig_counter > 0:
                         dots_on_line = 0
-                        print
-                    print '.',
+                        print('')
+                    print('.', end='')
                     dots_on_line += 1
                     sys.stdout.flush()
                 contig_counter += 1
@@ -364,7 +365,7 @@ class ProcessedAssembly:
             ret += self._chunk_sequence(seq)
         ret[-1] = ret[-1].strip()
         if verbose and contig_counter % (10 * (contig_only_print_scalar if len(scaffold) == 1 else 1))  != 0 and contig_counter > 0:
-            print
+            print('')
         return ret
     
     def agp(self):
@@ -469,7 +470,7 @@ class ProcessedAssembly:
         with open(outfile, 'w') as f:
             f.writelines(contents)
         if verbose:
-            print 'Writing complete\n'
+            print('Writing complete\n')
     
     def _make_scaffold_name(self, index, scaffold):
         '''Construct a string that shows the proper name of a scaffold.
@@ -715,11 +716,11 @@ if __name__ == '__main__':
     contig_mode = args.contig_mode
     verbose = args.verbose
     
-    print 'Processing assembly file. Details:'
-    print 'Assembly:\t{0}'.format(assembly)
-    print 'Fasta:\t\t{0}'.format(fasta)
-    print 'Output prefix:\t{0}'.format(prefix)
-    print 'Contig mode:\t{0}\n'.format(contig_mode)
+    print('Processing assembly file. Details:')
+    print('Assembly:\t{0}'.format(assembly))
+    print('Fasta:\t\t{0}'.format(fasta))
+    print('Output prefix:\t{0}'.format(prefix))
+    print('Contig mode:\t{0}\n'.format(contig_mode))
     
     processed_assembly = JuiceboxConverter().process(fasta, assembly,
                                                      contig_mode=contig_mode,
