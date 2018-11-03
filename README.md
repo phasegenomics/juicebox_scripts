@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/phasegenomics/juicebox_scripts.svg?branch=master)](https://travis-ci.com/phasegenomics/juicebox_scripts)
+
 # Juicebox utilities
 
 ![FP logo](https://github.com/phasegenomics/juicebox_scripts/blob/master/logo/BlueLogoHorSmall.png)
