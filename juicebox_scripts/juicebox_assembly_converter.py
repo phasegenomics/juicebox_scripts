@@ -190,7 +190,7 @@ class JuiceboxConverter:
                         raise MissingFragmentError('Assembly {0} is missing the sequence for index {1}'.format(assembly, len(assembly_map) + 1))
                     if int(tokens[2]) == 0:
                         raise ZeroLengthContigError('Assembly {0} lists contig {1} as zero length'.format(assembly, tokens[0]))
-                    assembly_map.append((tokens[0], tokens[2]))
+                    assembly_map.append((tokens[0], str(int(tokens[2]) - 1)))
                     unscaffolded_contigs.append(tokens[0])
                 else:
                     if contig_mode:
@@ -497,9 +497,9 @@ class ProcessedAssembly:
                 scaffold_length += int(contig[1])
                 if contig != scaffold[-1]:
                     scaffold_length += self.gap_size
-            scaffold_name = 'PGA_scaffold_{0} {1}_contigs length_{2}'.format(index,
-                                                                             contig_count,
-                                                                             scaffold_length)
+            scaffold_name = 'PGA_scaffold_{0}__{1}_contigs__length_{2}'.format(index,
+                                                                               contig_count,
+                                                                               scaffold_length)
         return scaffold_name
     
     def _chunk_sequence(self, sequence, line_len=80):
