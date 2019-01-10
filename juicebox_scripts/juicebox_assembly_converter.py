@@ -27,6 +27,7 @@ along with this program.  If not, see https://www.gnu.org/licenses/agpl-3.0.en.h
 from __future__ import print_function
 
 import sys
+import functools
 from _collections import defaultdict
 
 class JuiceboxConverter:
@@ -238,7 +239,7 @@ class JuiceboxConverter:
         # processing fragments in order is a problem as contigs will not necessarily be in order of fragments!!
         # e.g. it is possible to get fragment_3, fragment_1, fragment_2 as input order, leading to slicing errors.
         num_frags = 0
-        assembly_map.sort(cmp=cmp_assembly_map_entries)
+        assembly_map.sort(key=functools.cmp_to_key(cmp_assembly_map_entries))
         for fragment in assembly_map:
             #print(fragment)
             num_frags += 1
