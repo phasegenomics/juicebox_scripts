@@ -51,6 +51,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.test_bad_fasta_2 = self.test_file_dir + 'test_bad_2.fasta'
         self.test_breaks_bad_assembly = self.test_file_dir + 'test_breaks_bad.assembly'
         self.test_breaks_assembly = self.test_file_dir + 'test_breaks.assembly'
+        self.test_reordered_breaks_assembly = self.test_file_dir + 'test_breaks_reordered.assembly'
         self.test_contigs_bad_assembly = self.test_file_dir + 'test_contigs_bad.assembly'
         self.test_contigs_assembly = self.test_file_dir + 'test_contigs.assembly'
         self.test_scaffolds_bad_assembly = self.test_file_dir + 'test_scaffolds_bad.assembly'
@@ -126,7 +127,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
-    
+
     def test_make_scaffolds_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_scaffolds_assembly, contig_mode=True)
         #the scaffolds assembly with no breaks should do the same thing as the contigs assembly
@@ -146,6 +147,15 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
     
+    def test_make_reordered_contigs_in_contig_mode(self):
+        contigs = self.converter.process(self.test_fasta, self.test_reordered_breaks_assembly, contig_mode=True)
+        expected_contigs_fasta = self.read_file_lines(self.expected_result_breaks_straight_fasta)
+        expected_contigs_agp = self.read_file_lines(self.expected_result_breaks_straight_agp)
+        expected_contigs_bed = self.read_file_lines(self.expected_result_breaks_straight_bed)
+        self.assertEqual(contigs.fasta(), expected_contigs_fasta)
+        self.assertEqual(contigs.agp(), expected_contigs_agp)
+        self.assertEqual(contigs.bed(), expected_contigs_bed)
+
     def test_no_breaks_break_report(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
         expected_no_break_report = self.read_file_lines(self.expected_result_contigs_broken_contigs_txt)

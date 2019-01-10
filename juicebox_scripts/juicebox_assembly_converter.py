@@ -209,6 +209,8 @@ class JuiceboxConverter:
                         scaffolds.append(scaffold)
         if len(unscaffolded_contigs) != 0:
             raise UnscaffoldedContigError('Contigs are not included in scaffolding output: {0}'.format(unscaffolded_contigs))
+        if contig_mode:
+            scaffolds.sort()
         return assembly_map, scaffolds
     
     def _add_breaks(self, sequences, assembly_map):
@@ -231,17 +233,80 @@ class JuiceboxConverter:
                 assembly_map
         '''
         sequence_offsets = defaultdict(int)
-        new_sequences = dict() 
+        new_sequences = dict()
+        orig_sequences = sequences.keys()
+        # processing fragments in order is a problem as contigs will not necessarily be in order of fragments!!
+        # e.g. it is possible to get fragment_3, fragment_1, fragment_2 as input order, leading to slicing errors.
+        num_frags = 0
+        assembly_map.sort(cmp=cmp_assembly_map_entries)
         for fragment in assembly_map:
+            #print(fragment)
+            num_frags += 1
+            if num_frags % 100 == 0:
+                print(num_frags, "contigs processed for breaks")
             fragment_name = fragment[0]
             fragment_size = int(fragment[1])
-            if ':::fragment' in fragment_name:
-                orig_contig = fragment_name.split(':::fragment')[0]
+            if ':::fragment' in fragment_name and fragment_name not in orig_sequences:
+                orig_contig = ':::fragment'.join(fragment_name.split(':::fragment')[:-1])
+                #print(fragment_name)
+                #print(orig_contig)
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
                 sequence_offsets[orig_contig] += fragment_size
             else:
                 new_sequences[fragment_name] = sequences[fragment_name]
         return new_sequences
+
+def cmp_assembly_map_entries(frag1, frag2):
+    '''Sort comparison fn to allow us to reorder fragments of broken contigs according to position in original contig.
+    Allows us to process assemblies regardless of input order.
+
+    Args:
+        frag1 ((str, str)): entry from assembly_maps
+        frag2 ((str, str)): entry from assembly_maps
+
+    Returns:
+        int: the cmp order of the two fragments (-1, 0, or 1)
+
+    '''
+    names1 = extract_contig_info(frag1[0])
+    names2 = extract_contig_info(frag2[0])
+    # order doesn't matter if not from same orig contig
+    if names1["orig"] != names2["orig"]:
+        if names1["orig"] > names2["orig"]:
+            return 1
+        elif names1["orig"] < names2["orig"]:
+            return -1
+        else:
+            raise BadContigNameError("contig {0} or {1} wrong??".format(
+                                     frag1[0], frag2[0]))
+    # else have to infer relative ordering of frags from same contig
+    else:
+        if names1["index"] is None or names1["index"] is None:
+            raise BadContigNameError("contig {0} or {1} is formatted as if broken but no fragment detected??".format(
+                                     frag1[0], frag2[0]))
+        if names1["index"] > names2["index"]:
+            order = 1
+        elif names1["index"] < names2["index"]:
+            order = -1
+        else:
+            raise BadContigNameError("contigs {0} and {1} repeated??".format(frag1[0], frag2[0]))
+    return order
+
+def extract_contig_info(name):
+    '''Assuming Juicebox contig breaking convention (":::fragment_n:::debris"), extract original contig name and
+    fragment index of a given contig (unbroken contigs are'''
+    names = {}
+    frag_fields = name.split(":::")
+    if len(frag_fields) == 1:
+        names["orig"] = frag_fields[0]
+        names["index"] = None
+    else:
+        if frag_fields[-1] == "debris":
+            frag_fields.pop()
+        names["orig"] = ":::".join(frag_fields[:-1])
+        names["index"] = int(frag_fields[-1].replace("fragment_", ""))
+    return names
+
 
 class ProcessedAssembly:
     '''The ProcessedAssembly class represents the results of
@@ -449,13 +514,13 @@ class ProcessedAssembly:
                                     fragment_size
                                 ])
                 ret.append(line + '\n')
-                if '::debris' in fragment_name:
+                if ':::debris' in fragment_name:
                     break_count += 1
                 broken_orig_contigs.add(orig_contig)
                 break_offsets[orig_contig] += int(fragment_size)
         ret.insert(0, '#orig_contig\tfragment\tbreak_start\tbreak_end\tfragment_len\n')
         ret.insert(0, '#{0} total breaks in {1} contigs\n'.format(break_count, len(broken_orig_contigs)))
-        ret[-1] = ret[-1].strip()
+        #ret[-1] = ret[-1].strip()
         return ret
     
     def _write_file(self, outfile, contents, verbose=False):
@@ -489,7 +554,7 @@ class ProcessedAssembly:
                     or not
         '''
         if self.contig_mode:
-            scaffold_name = '{0}'.format(scaffold[0][0])
+            scaffold_name = '{0}'.format(scaffold[0][0]).replace(":::", "___")
         else:
             contig_count = len(scaffold)
             scaffold_length = 0
@@ -690,6 +755,9 @@ class InvalidFastaError(ValueError):
     read.'''
     pass
 
+class BadContigNameError(ValueError):
+    '''An Error caused by a contig name that violates expected naming convention'''
+    pass
 
 if __name__ == '__main__':
     import argparse
