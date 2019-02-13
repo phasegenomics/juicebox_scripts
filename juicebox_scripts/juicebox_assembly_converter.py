@@ -247,8 +247,11 @@ class JuiceboxConverter:
                 print(num_frags, "contigs processed for breaks")
             fragment_name = fragment[0]
             fragment_size = int(fragment[1])
-            if ':::fragment' in fragment_name and fragment_name not in orig_sequences:
-                orig_contig = ':::fragment'.join(fragment_name.split(':::fragment')[:-1])
+            if (':::fragment' in fragment_name or '___fragment' in fragment_name) and fragment_name not in orig_sequences:
+                if ':::fragment' in fragment_name:
+                    orig_contig = ':::fragment'.join(fragment_name.split(':::fragment')[:-1])
+                else:
+                    orig_contig = '___fragment'.join(fragment_name.split('___fragment')[:-1])
                 #print(fragment_name)
                 #print(orig_contig)
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
