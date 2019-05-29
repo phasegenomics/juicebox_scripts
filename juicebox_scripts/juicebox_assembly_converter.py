@@ -33,6 +33,9 @@ from _collections import defaultdict
 class ContigNotFoundError(ValueError):
     pass
 
+class FragmentAndContigLengthDiscrepancy(ValueError):
+    pass
+
 class JuiceboxConverter:
     '''The JuiceboxConverter class offers methods to read in a Juicebox
     .assembly file and the accompanying .fasta file, and generates a
@@ -264,10 +267,12 @@ class JuiceboxConverter:
                     orig_contig = fragment_name.replace(':::', '___')
                 if orig_contig not in sequences:
                     raise ContigNotFoundError('Could not find contig {0} in original FASTA'.format(fragment))
-                #print(fragment_name)
                 #print(orig_contig)
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
                 sequence_offsets[orig_contig] += fragment_size
+                if fragment_size != len(new_sequences[fragment_name]):
+                    raise FragmentAndContigLengthDiscrepancy("original contig is {0} and fragment length is {1}".format(
+                        fragment_size, len(new_sequences[fragment_name])))
             else:
                 new_sequences[fragment_name] = sequences[fragment_name]
         return new_sequences
