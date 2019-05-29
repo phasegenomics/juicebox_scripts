@@ -89,7 +89,6 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
                 outlist = []
                 contigs = line.strip().split()
                 for contig_num in contigs:
-                    orientation = "-" if contig_num.startswith("-") else "+"
                     if contig_num.replace("-", "") in purged_indices:
                         purged_from_scaffolds.add(contig_num.replace("-", ""))
                         continue
