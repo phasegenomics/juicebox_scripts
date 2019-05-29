@@ -69,7 +69,7 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
     """
     with open(input_assembly, "r") as input, \
          open(output_assembly, "w") as output:
-        index = 0
+        index = 1
         purged_names = set([])
         purged_indices = set([])
         purged_from_scaffolds = set([])
