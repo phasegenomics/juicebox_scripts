@@ -64,6 +64,9 @@ def get_exclude(contigs, file):
     return exclude
 
 def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
+    """Take an input assembly file and create an output assembly file
+    without the contigs specified in the exclude set.
+    """
     with open(input_assembly, "r") as input, \
          open(output_assembly, "w") as output:
         index = 0
