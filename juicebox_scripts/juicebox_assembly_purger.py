@@ -73,6 +73,7 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
         purged_names = set([])
         purged_indices = set([])
         purged_from_scaffolds = set([])
+        index_map = {}
         for line in input:
             if line.startswith(">"):
                 name, num, length = line.strip().split()
@@ -80,23 +81,28 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
                 if name in exclude:
                     purged_names.add(name)
                     purged_indices.add(num)
+                    index_map[num] = None
                     continue
                 else:
                     outstring = ">{} {} {}\n".format(name, index, length)
                     output.write(outstring)
+                    index_map[num] = str(index)
                     index += 1
             else:
                 outlist = []
                 contigs = line.strip().split()
-                for contig_num in contigs:
-                    if contig_num.replace("-", "") in purged_indices:
-                        purged_from_scaffolds.add(contig_num.replace("-", ""))
+                for orient_num in contigs:
+                    orientation = "-" if orient_num.startswith("-") else ""
+                    num = orient_num.replace("-", "")
+                    if index_map[num] is None:
+                        purged_from_scaffolds.add(num)
                         continue
                     else:
-                        outlist.append(contig_num)
+                        outlist.append(orientation + index_map[num])
                 if len(outlist) > 0:
                     outstring = " ".join(outlist) + "\n"
                     output.write(outstring)
+
     all_exclude_contigs_found = exclude.issubset(purged_names) and purged_names.issubset(exclude)
     header_scaffold_match = len(purged_indices) == len(purged_from_scaffolds)
 
