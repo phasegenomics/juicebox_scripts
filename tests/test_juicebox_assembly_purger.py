@@ -37,6 +37,9 @@ class JuiceboxPurgerTestCase(unittest.TestCase):
         self.output_dir = self.collateral + "test_outputs/"
         self.expected_output_dir = self.collateral + "expected_test_outputs/"
 
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
     def tearDown(self):
         outfiles = ["test_filter_assembly_null.assembly",
                     "test_filter_assembly_minus_one.assembly",
@@ -72,3 +75,6 @@ class JuiceboxPurgerTestCase(unittest.TestCase):
         outfile = self.output_dir + "test_filter_assembly_missing_contig.assembly"
         with self.assertRaises(ValueError):
             filter_assembly(exclude, self.input_assembly, outfile, logging="silent")
+
+if __name__ == "__main__":
+    unittest.main()
