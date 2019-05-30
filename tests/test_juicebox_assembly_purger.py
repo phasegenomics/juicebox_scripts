@@ -28,12 +28,13 @@ import os
 import filecmp
 import unittest
 
-from juicebox_scripts.juicebox_assembly_purger import filter_assembly
+from juicebox_scripts.juicebox_assembly_purger import filter_assembly, get_exclude
 
 class JuiceboxPurgerTestCase(unittest.TestCase):
     def setUp(self):
         self.collateral = os.path.dirname(__file__) + "/collateral/"
         self.input_assembly = self.collateral + "test_inputs/test_scaffolds.assembly"
+        self.input_exclude_file = self.collateral + "test_inputs/test_exclude.txt"
         self.output_dir = self.collateral + "test_outputs/"
         self.expected_output_dir = self.collateral + "expected_test_outputs/"
 
@@ -75,6 +76,25 @@ class JuiceboxPurgerTestCase(unittest.TestCase):
         outfile = self.output_dir + "test_filter_assembly_missing_contig.assembly"
         with self.assertRaises(ValueError):
             filter_assembly(exclude, self.input_assembly, outfile, logging="silent")
+
+    def test_get_exclude_from_list(self):
+        exclude_list = ["1", "2", "3"]
+        expected_exclude = set(["1", "2", "3"])
+        self.assertEquals(get_exclude(exclude_list, None), expected_exclude)
+
+    def test_get_exclude_with_duplicates(self):
+        exclude_list = ["1", "2", "3", "1"]
+        expected_exclude = set(["1", "2", "3"])
+        self.assertEquals(get_exclude(exclude_list, None), expected_exclude)
+
+    def test_get_exclude_from_file(self):
+        expected_exclude = set(["1", "2", "3"])
+        self.assertEquals(get_exclude(None, self.input_exclude_file), expected_exclude)
+
+    def test_get_exclude_from_file_and_list(self):
+        exclude_list = ["3", "4", "5"]
+        expected_exclude = set(["1", "2", "3", "4", "5"])
+        self.assertEquals(get_exclude(exclude_list, self.input_exclude_file), expected_exclude)
 
 if __name__ == "__main__":
     unittest.main()
