@@ -31,7 +31,8 @@ import unittest
 from juicebox_scripts.juicebox_assembly_purger import filter_assembly, get_exclude
 
 class JuiceboxPurgerTestCase(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         self.collateral = os.path.dirname(__file__) + "/collateral/"
         self.input_assembly = self.collateral + "test_inputs/test_scaffolds.assembly"
         self.input_exclude_file = self.collateral + "test_inputs/test_exclude.txt"
@@ -40,6 +41,11 @@ class JuiceboxPurgerTestCase(unittest.TestCase):
 
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
+
+    @classmethod
+    def tearDownClass(self):
+        if os.path.exists(self.output_dir):
+            os.removedirs(self.output_dir)
 
     def tearDown(self):
         outfiles = ["test_filter_assembly_null.assembly",
