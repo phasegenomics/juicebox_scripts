@@ -40,6 +40,10 @@ def parse_args():
                         default=None,
                         help="Path to file of contigs to exclude (with contig names in "
                              "first whitespace-delimited column, one per line)")
+    parser.add_argument("--logging",
+                        choices=["verbose", "silent"],
+                        default="verbose",
+                        help="Set logging level (Default: %(default)s)")
     args = parser.parse_args()
 
     if args.exclude_contigs is None and args.exclude_file is None:
@@ -110,11 +114,11 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
         not_found = exclude.difference(purged_names)
         mistaken_purge = purged_names.difference(exclude)
         if len(not_found) > 0:
-            raise ValueError("Error: contigs specified for exclusion \
-                             were not found:\n{}".format(" ".join(not_found)))
+            raise ValueError("Error: contigs specified for exclusion "
+                             "were not found: {}".format(" ".join(not_found)))
         elif len(mistaken_purge) > 0:
-            raise ValueError("Error: contigs not specified for exclusion \
-                             were mistakenly purged:\n{}".format(" ".join(mistaken_purge)))
+            raise ValueError("Error: contigs not specified for exclusion "
+                             "were mistakenly purged: {}".format(" ".join(mistaken_purge)))
     elif not header_scaffold_match:
         missing_from_scaffold = purged_from_scaffolds.difference(purged_indices)
         missing_from_header = purged_indices.difference(purged_from_scaffolds)
@@ -124,9 +128,10 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
             # This shouldn't happen, but it's included it for completeness
             raise ValueError("Error: contigs found in scaffolds were missing from header: {}".format(" ".join(missing_from_header)))
 
-    print("SUCCESS")
-    print("Purged {} contigs from header and scaffolds.".format(len(purged_names), len(purged_from_scaffolds)))
-    print("Finished writing output assembly to {}.".format(output_assembly))
+    if "logging" in kwargs and kwargs["logging"] == "verbose":
+        print("SUCCESS")
+        print("Purged {} contigs from header and scaffolds.".format(len(purged_names), len(purged_from_scaffolds)))
+        print("Finished writing output assembly to {}.".format(output_assembly))
 
 def main():
     args = parse_args()
