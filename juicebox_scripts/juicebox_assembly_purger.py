@@ -56,8 +56,8 @@ def get_exclude(contigs, file):
         for name in contigs:
             exclude.add(name)
     if file is not None:
-        with open(file, 'r') as input:
-            for line in input:
+        with open(file, 'r') as infile:
+            for line in infile:
                 name = line.split()[0]
                 exclude.add(name)
 
@@ -67,14 +67,14 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
     """Take an input assembly file and create an output assembly file
     without the contigs specified in the exclude set.
     """
-    with open(input_assembly, "r") as input, \
-         open(output_assembly, "w") as output:
+    with open(input_assembly, "r") as infile, \
+         open(output_assembly, "w") as outfile:
         index = 1
         purged_names = set([])
         purged_indices = set([])
         purged_from_scaffolds = set([])
         index_map = {}
-        for line in input:
+        for line in infile:
             if line.startswith(">"):
                 name, num, length = line.strip().split()
                 name = name.replace(">", "")
@@ -85,7 +85,7 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
                     continue
                 else:
                     outstring = ">{} {} {}\n".format(name, index, length)
-                    output.write(outstring)
+                    outfile.write(outstring)
                     index_map[num] = str(index)
                     index += 1
             else:
@@ -101,7 +101,7 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
                         outlist.append(orientation + index_map[num])
                 if len(outlist) > 0:
                     outstring = " ".join(outlist) + "\n"
-                    output.write(outstring)
+                    outfile.write(outstring)
 
     all_exclude_contigs_found = exclude.issubset(purged_names) and purged_names.issubset(exclude)
     header_scaffold_match = len(purged_indices) == len(purged_from_scaffolds)
