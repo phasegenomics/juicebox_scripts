@@ -94,7 +94,7 @@ def filter_assembly(exclude, input_assembly, output_assembly, **kwargs):
                 for orient_num in contigs:
                     orientation = "-" if orient_num.startswith("-") else ""
                     num = orient_num.replace("-", "")
-                    if index_map[num] is None:
+                    if num in purged_indices:
                         purged_from_scaffolds.add(num)
                         continue
                     else:
