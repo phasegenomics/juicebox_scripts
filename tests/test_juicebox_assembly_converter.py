@@ -35,7 +35,8 @@ import unittest
 # sys.path.append('src/')
 # sys.path.append('../src/')
 from juicebox_scripts.juicebox_assembly_converter import JuiceboxConverter, ProcessedAssembly
-from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, UnscaffoldedContigError, ZeroLengthContigError 
+from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, \
+    UnscaffoldedContigError, ZeroLengthContigError, FragmentAndContigLengthDiscrepancy
 
 class JuiceboxConverterTestCase(unittest.TestCase):
     def setUp(self):
@@ -51,6 +52,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.test_bad_fasta_2 = self.test_file_dir + 'test_bad_2.fasta'
         self.test_breaks_bad_assembly = self.test_file_dir + 'test_breaks_bad.assembly'
         self.test_breaks_assembly = self.test_file_dir + 'test_breaks.assembly'
+        self.test_breaks_oversize_fragment = self.test_file_dir + 'test_breaks_oversize_fragment.assembly'
         self.test_reordered_breaks_assembly = self.test_file_dir + 'test_breaks_reordered.assembly'
         self.test_contigs_bad_assembly = self.test_file_dir + 'test_contigs_bad.assembly'
         self.test_contigs_assembly = self.test_file_dir + 'test_contigs.assembly'
@@ -197,7 +199,11 @@ class JuiceboxConverterTestCase(unittest.TestCase):
     def test_bad_breaks(self):
         with self.assertRaises(MissingFragmentError):
             self.converter.process(self.test_fasta, self.test_breaks_bad_assembly)
-    
+
+    def test_oversize_fragment(self):
+        with self.assertRaises(FragmentAndContigLengthDiscrepancy):
+            self.converter.process(self.test_fasta, self.test_breaks_oversize_fragment)
+
     def test_bad_fasta(self):
         with self.assertRaises(InvalidFastaError):
             self.converter.process(self.test_bad_fasta_1, self.test_contigs_assembly)
