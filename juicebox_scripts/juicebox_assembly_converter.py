@@ -250,7 +250,7 @@ class JuiceboxConverter:
         num_frags = 0
         assembly_map.sort(key=functools.cmp_to_key(cmp_assembly_map_entries))
         for fragment in assembly_map:
-            print(fragment)
+            #print(fragment)
             num_frags += 1
             if num_frags % 100 == 0:
                 print(num_frags, "contigs processed for breaks")
@@ -265,11 +265,11 @@ class JuiceboxConverter:
                     orig_contig = fragment_name.replace(':::', '___')
                 if orig_contig not in sequences:
                     raise ContigNotFoundError('Could not find contig {0} in original FASTA'.format(fragment))
-                print(orig_contig)
+                #print(orig_contig)
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
                 sequence_offsets[orig_contig] += fragment_size
                 if fragment_size != len(new_sequences[fragment_name]):
-                    print("original contig {3} is {0} and fragment {4} length is {1}".format(
+                    print("WARNING: original contig {2} is {0} and fragment {3} length is {1}".format(
                         fragment_size, len(new_sequences[fragment_name]), orig_contig, fragment_name))
             else:
                 new_sequences[fragment_name] = sequences[fragment_name]
