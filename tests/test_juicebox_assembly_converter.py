@@ -37,7 +37,7 @@ import unittest
 from juicebox_scripts.juicebox_assembly_converter import JuiceboxConverter, ProcessedAssembly
 
 from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, \
-    UnscaffoldedContigError, ZeroLengthContigError, FragmentAndContigLengthDiscrepancy
+    UnscaffoldedContigError, ZeroLengthContigError
 
 class JuiceboxConverterTestCase(unittest.TestCase):
     def setUp(self):
@@ -200,10 +200,6 @@ class JuiceboxConverterTestCase(unittest.TestCase):
     def test_bad_breaks(self):
         with self.assertRaises(MissingFragmentError):
             self.converter.process(self.test_fasta, self.test_breaks_bad_assembly)
-
-    def test_oversize_fragment(self):
-        with self.assertRaises(FragmentAndContigLengthDiscrepancy):
-            self.converter.process(self.test_fasta, self.test_breaks_oversize_fragment)
 
     def test_bad_fasta(self):
         with self.assertRaises(InvalidFastaError):
