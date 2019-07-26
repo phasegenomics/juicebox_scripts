@@ -4,7 +4,7 @@ Shawn Sullivan
 October 31, 2018
 Phase Genomics
 
-juicebox_scripts/test_juicebox_assembly_converter.py
+tests/test_juicebox_assembly_converter.py
 
 This file contains unit tests for functions of the juicebox_assembly_converter.py script.
 
@@ -35,6 +35,7 @@ import unittest
 # sys.path.append('src/')
 # sys.path.append('../src/')
 from juicebox_scripts.juicebox_assembly_converter import JuiceboxConverter, ProcessedAssembly
+
 from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, \
     UnscaffoldedContigError, ZeroLengthContigError
 
@@ -45,7 +46,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.test_output_agp = 'test_output.agp'
         self.test_output_bed = 'test_output.bed'
         self.test_output_break_report = 'test_output.break_report.txt'
-        
+
         self.collateral_dir = os.path.dirname(__file__) + '/collateral/'
         self.test_file_dir = self.collateral_dir + 'test_inputs/'
         self.test_bad_fasta_1 = self.test_file_dir + 'test_bad_1.fasta'
@@ -59,7 +60,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.test_scaffolds_bad_assembly = self.test_file_dir + 'test_scaffolds_bad.assembly'
         self.test_scaffolds_assembly = self.test_file_dir + 'test_scaffolds.assembly'
         self.test_fasta = self.test_file_dir + 'test.fasta'
-        
+
         self.expected_outputs_dir = self.collateral_dir + 'expected_test_outputs/'
         self.expected_result_breaks_straight_agp = self.expected_outputs_dir + 'expected_result_breaks_straight.agp'
         self.expected_result_breaks_straight_bed = self.expected_outputs_dir + 'expected_result_breaks_straight.bed'
@@ -78,7 +79,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.expected_result_scaffolds_agp = self.expected_outputs_dir + 'expected_result_scaffolds.agp'
         self.expected_result_scaffolds_bed= self.expected_outputs_dir + 'expected_result_scaffolds.bed'
         self.expected_result_scaffolds_fasta = self.expected_outputs_dir + 'expected_result_scaffolds.fasta'
-        
+
 
     def tearDown(self):
         if os.path.exists(self.test_output_fasta):
@@ -89,7 +90,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
             os.remove(self.test_output_bed)
         if os.path.exists(self.test_output_break_report):
             os.remove(self.test_output_break_report)
-    
+
     def read_file_lines(self, fname):
         with open(fname) as f:
             return f.readlines()
@@ -102,7 +103,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
-    
+
     def test_make_scaffolds(self):
         scaffolds = self.converter.process(self.test_fasta, self.test_scaffolds_assembly)
         expected_scaffolds_fasta = self.read_file_lines(self.expected_result_scaffolds_fasta)
@@ -111,7 +112,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(scaffolds.fasta(), expected_scaffolds_fasta)
         self.assertEqual(scaffolds.agp(), expected_scaffolds_agp)
         self.assertEqual(scaffolds.bed(), expected_scaffolds_bed)
-    
+
     def test_make_breaks(self):
         breaks = self.converter.process(self.test_fasta, self.test_breaks_assembly)
         expected_breaks_fasta = self.read_file_lines(self.expected_result_breaks_fasta)
@@ -120,7 +121,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(breaks.fasta(), expected_breaks_fasta)
         self.assertEqual(breaks.agp(), expected_breaks_agp)
         self.assertEqual(breaks.bed(), expected_breaks_bed)
-    
+
     def test_make_contigs_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly, contig_mode=True)
         expected_contigs_fasta = self.read_file_lines(self.expected_result_contigs_straight_fasta)
@@ -139,7 +140,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
-    
+
     def test_make_breaks_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_breaks_assembly, contig_mode=True)
         expected_contigs_fasta = self.read_file_lines(self.expected_result_breaks_straight_fasta)
@@ -148,7 +149,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(contigs.fasta(), expected_contigs_fasta)
         self.assertEqual(contigs.agp(), expected_contigs_agp)
         self.assertEqual(contigs.bed(), expected_contigs_bed)
-    
+
     def test_make_reordered_contigs_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_reordered_breaks_assembly, contig_mode=True)
         expected_contigs_fasta = self.read_file_lines(self.expected_result_breaks_straight_fasta)
@@ -162,40 +163,40 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
         expected_no_break_report = self.read_file_lines(self.expected_result_contigs_broken_contigs_txt)
         self.assertEqual(contigs.break_report(), expected_no_break_report)
-    
+
     def test_breaks_break_report(self):
         contigs = self.converter.process(self.test_fasta, self.test_breaks_assembly)
         expected_break_report = self.read_file_lines(self.expected_result_breaks_broken_contigs_txt)
         self.assertEqual(contigs.break_report(), expected_break_report)
-    
+
     def test_write_fasta(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
         contigs.write_fasta(self.test_output_fasta)
         self.assertTrue(filecmp.cmp(self.expected_result_contigs_fasta, self.test_output_fasta))
-    
+
     def test_write_agp(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
         contigs.write_agp(self.test_output_agp)
         self.assertTrue(filecmp.cmp(self.expected_result_contigs_agp, self.test_output_agp))
-    
+
     def test_write_bed(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly)
         contigs.write_bed(self.test_output_bed)
         self.assertTrue(filecmp.cmp(self.expected_result_contigs_bed, self.test_output_bed))
-    
+
     def test_write_break_report(self):
         contigs = self.converter.process(self.test_fasta, self.test_breaks_assembly)
         contigs.write_break_report(self.test_output_break_report)
         self.assertTrue(filecmp.cmp(self.expected_result_breaks_broken_contigs_txt, self.test_output_break_report))
-    
+
     def test_bad_contigs(self):
         with self.assertRaises(ZeroLengthContigError):
             self.converter.process(self.test_fasta, self.test_contigs_bad_assembly)
-    
+
     def test_bad_scaffolds(self):
         with self.assertRaises(UnscaffoldedContigError):
             self.converter.process(self.test_fasta, self.test_scaffolds_bad_assembly)
-    
+
     def test_bad_breaks(self):
         with self.assertRaises(MissingFragmentError):
             self.converter.process(self.test_fasta, self.test_breaks_bad_assembly)
@@ -204,7 +205,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         with self.assertRaises(InvalidFastaError):
             self.converter.process(self.test_bad_fasta_1, self.test_contigs_assembly)
         with self.assertRaises(InvalidFastaError):
-            self.converter.process(self.test_bad_fasta_2, self.test_contigs_assembly)    
+            self.converter.process(self.test_bad_fasta_2, self.test_contigs_assembly)
 
 
 if __name__ == '__main__':
