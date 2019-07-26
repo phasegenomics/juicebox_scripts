@@ -33,8 +33,6 @@ from _collections import defaultdict
 class ContigNotFoundError(ValueError):
     pass
 
-class FragmentAndContigLengthDiscrepancy(ValueError):
-    pass
 
 class JuiceboxConverter:
     '''The JuiceboxConverter class offers methods to read in a Juicebox
@@ -271,8 +269,8 @@ class JuiceboxConverter:
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
                 sequence_offsets[orig_contig] += fragment_size
                 if fragment_size != len(new_sequences[fragment_name]):
-                    raise FragmentAndContigLengthDiscrepancy("original contig is {0} and fragment length is {1}".format(
-                        fragment_size, len(new_sequences[fragment_name])))
+                    print("original contig {3} is {0} and fragment {4} length is {1}".format(
+                        fragment_size, len(new_sequences[fragment_name]), orig_contig, fragment_name))
             else:
                 new_sequences[fragment_name] = sequences[fragment_name]
         return new_sequences
