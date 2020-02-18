@@ -89,6 +89,10 @@ class JuiceboxConverter:
             print('.assembly read\n')
             print('Checking for breaks listed in .assembly and making them...')
         sequences = self._add_breaks(sequences, assembly_map)
+
+        # update contig names in scaffolds as needed based on self._add_breaks()
+        scaffolds = self._update_scaffold_names(scaffolds)
+
         if verbose:
             print('Break check complete\n')
         return ProcessedAssembly(sequences, assembly_map, scaffolds, simple_chr_names=simple_chr_names)
@@ -249,8 +253,8 @@ class JuiceboxConverter:
         # e.g. it is possible to get fragment_3, fragment_1, fragment_2 as input order, leading to slicing errors.
         num_frags = 0
         assembly_map.sort(key=functools.cmp_to_key(cmp_assembly_map_entries))
+        update_scaffold_map = {}
         for fragment in assembly_map:
-            #print(fragment)
             num_frags += 1
             if num_frags % 100 == 0:
                 print(num_frags, "contigs processed for breaks")
@@ -265,15 +269,53 @@ class JuiceboxConverter:
                     orig_contig = fragment_name.replace(':::', '___')
                 if orig_contig not in sequences:
                     raise ContigNotFoundError('Could not find contig {0} in original FASTA'.format(fragment))
-                #print(orig_contig)
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
                 sequence_offsets[orig_contig] += fragment_size
                 if fragment_size != len(new_sequences[fragment_name]):
                     print("WARNING: original contig {2} is {0} and fragment {3} length is {1}".format(
                         fragment_size, len(new_sequences[fragment_name]), orig_contig, fragment_name))
             else:
-                new_sequences[fragment_name] = sequences[fragment_name]
+                if fragment_name not in sequences:
+                    # new JB makes it possible to explicitly trash contigs and add the
+                    # ":::debris" flag to their name. This means that the contig is
+                    # unchanged but now has that string, so it isn't in orig sequences.
+                    if fragment_name.endswith(":::debris"):
+
+                        nondebris_name = fragment_name.replace(":::debris", "")
+                        # -1 here because of some kind of slicing that .assembly format does...
+                        orig_len = len(sequences[nondebris_name]) - 1
+                        print("WARNING: trying to map debris fragment {} to the whole"
+                              " original contig. This contig may have been trashed in Juicebox. Lengths of orig and debris are {}, {}.".format(fragment_name, fragment_size, orig_len))
+
+                        if fragment_size != orig_len:
+                            raise BadContigNameError("Mapping of debris to original contig failed- lengths are different!!")
+
+                        new_sequences[nondebris_name] = sequences[nondebris_name]
+
+                        # also fix the name in the assembly_map list
+                        # have to do this weirdly cause it's a tuple
+                        new_fragment = (nondebris_name, fragment[1])
+                        assembly_map[assembly_map.index(fragment)] = new_fragment
+                        update_scaffold_map[fragment_name] = nondebris_name
+                    else:
+                        raise BadContigNameError("Unbroken contig {} failed to map!!".format(fragment_name))
+
+                else:
+                    new_sequences[fragment_name] = sequences[fragment_name]
+
+        self.update_scaffold_map = update_scaffold_map
         return new_sequences
+
+    def _update_scaffold_names(self, scaffolds):
+        '''Update any scaffold names that need it based on self.update_scaffold_list.'''
+        if len(self.update_scaffold_map) > 0:
+            for scaffold in scaffolds:
+                for contig in scaffold:
+                    if contig[0] in self.update_scaffold_map:
+                        new_tuple = (self.update_scaffold_map[contig[0]], contig[1], contig[2], contig[3])
+                        scaffold[scaffold.index(contig)] = new_tuple
+
+        return scaffolds
 
 def cmp_assembly_map_entries(frag1, frag2):
     '''Sort comparison fn to allow us to reorder fragments of broken contigs according to position in original contig.
@@ -316,12 +358,13 @@ def extract_contig_info(name):
     fragment index of a given contig (unbroken contigs are'''
     names = {}
     frag_fields = name.split(":::")
+    if frag_fields[-1] == "debris":
+        frag_fields.pop()
+
     if len(frag_fields) == 1:
         names["orig"] = frag_fields[0]
         names["index"] = None
     else:
-        if frag_fields[-1] == "debris":
-            frag_fields.pop()
         names["orig"] = ":::".join(frag_fields[:-1])
         names["index"] = int(frag_fields[-1].replace("fragment_", ""))
     return names
