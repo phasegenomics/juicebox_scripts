@@ -37,7 +37,7 @@ import unittest
 from juicebox_scripts.juicebox_assembly_converter import JuiceboxConverter, ProcessedAssembly
 
 from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, \
-    UnscaffoldedContigError, ZeroLengthContigError
+    UnscaffoldedContigError, ZeroLengthContigError, BadContigNameError
 
 class JuiceboxConverterTestCase(unittest.TestCase):
     def setUp(self):
@@ -55,6 +55,7 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.test_breaks_assembly = self.test_file_dir + 'test_breaks.assembly'
         self.test_breaks_oversize_fragment = self.test_file_dir + 'test_breaks_oversize_fragment.assembly'
         self.test_reordered_breaks_assembly = self.test_file_dir + 'test_breaks_reordered.assembly'
+        self.test_reordered_breaks_debris_assembly = self.test_file_dir + 'test_breaks_reordered_debris.assembly'
         self.test_contigs_bad_assembly = self.test_file_dir + 'test_contigs_bad.assembly'
         self.test_contigs_assembly = self.test_file_dir + 'test_contigs.assembly'
         self.test_scaffolds_bad_assembly = self.test_file_dir + 'test_scaffolds_bad.assembly'
@@ -121,6 +122,19 @@ class JuiceboxConverterTestCase(unittest.TestCase):
         self.assertEqual(breaks.fasta(), expected_breaks_fasta)
         self.assertEqual(breaks.agp(), expected_breaks_agp)
         self.assertEqual(breaks.bed(), expected_breaks_bed)
+
+    def test_make_breaks_debris(self):
+        breaks = self.converter.process(self.test_fasta, self.test_reordered_breaks_debris_assembly)
+        expected_breaks_fasta = self.read_file_lines(self.expected_result_breaks_fasta)
+        expected_breaks_agp = self.read_file_lines(self.expected_result_breaks_agp)
+        expected_breaks_bed = self.read_file_lines(self.expected_result_breaks_bed)
+        self.assertEqual(breaks.fasta(), expected_breaks_fasta)
+        self.assertEqual(breaks.agp(), expected_breaks_agp)
+        self.assertEqual(breaks.bed(), expected_breaks_bed)
+
+    def test_make_breaks_debris(self):
+        with self.assertRaises(BadContigNameError):
+            breaks = self.converter.process(self.test_fasta, self.test_reordered_breaks_debris_assembly)
 
     def test_make_contigs_in_contig_mode(self):
         contigs = self.converter.process(self.test_fasta, self.test_contigs_assembly, contig_mode=True)

@@ -52,6 +52,13 @@ Usage:
 makeAgpFromFasta.py usage:	makeAgpFromFasta.py <fasta_file> <agp_out_file>
 ```
 
+### degap_assembly.py
+Some newer versions of juicebox may introduce gaps explicitly as contigs in the .assembly file. We are not currently supporting this in the `juicebox_assembly_converter.py` script, but we include the `degap_assembly.py` script which will remove the gap contigs and convert to an old-style .assembly file that our tools will accept. (Note that we already add gaps to scaffolds generated with `juicebox_assembly_converter.py`, which is why it fails.) This tool takes the .assembly file path as a positional argument and writes a new file to STDOUT:
+
+```
+python degap_assembly.py has_gaps.assembly > no_gaps.assembly
+```
+
 ## Example Workflows
 Here are some of the common tasks that one might want to use these scripts for.
 
