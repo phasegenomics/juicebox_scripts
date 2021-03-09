@@ -204,7 +204,7 @@ class JuiceboxConverter:
                         raise MissingFragmentError('Assembly {0} is missing the sequence for index {1}'.format(assembly, len(assembly_map) + 1))
                     if int(tokens[2]) == 0:
                         raise ZeroLengthContigError('Assembly {0} lists contig {1} as zero length'.format(assembly, tokens[0]))
-                    assembly_map.append((tokens[0], str(int(tokens[2]) - 1)))
+                    assembly_map.append((tokens[0], str(int(tokens[2])-1)))
                     unscaffolded_contigs.append(tokens[0])
                 else:
                     if contig_mode:
@@ -259,7 +259,8 @@ class JuiceboxConverter:
             if num_frags % 100 == 0:
                 print(num_frags, "contigs processed for breaks")
             fragment_name = fragment[0]
-            fragment_size = int(fragment[1])
+            #fragment_size is incremented because Juicebox assembly size is inclusive on both ends
+            fragment_size = int(fragment[1])+1
             if (':::fragment' in fragment_name or '___fragment' in fragment_name) and fragment_name not in orig_sequences:
                 if ':::fragment' in fragment_name:
                     orig_contig = ':::fragment'.join(fragment_name.split(':::fragment')[:-1])
@@ -342,7 +343,7 @@ def cmp_assembly_map_entries(frag1, frag2):
                                      frag1[0], frag2[0]))
     # else have to infer relative ordering of frags from same contig
     else:
-        if names1["index"] is None or names1["index"] is None:
+        if names1["index"] is None or names2["index"] is None:
             raise BadContigNameError("contig {0} or {1} is formatted as if broken but no fragment detected??".format(
                                      frag1[0], frag2[0]))
         if names1["index"] > names2["index"]:
@@ -479,6 +480,8 @@ class ProcessedAssembly:
         contig_counter = 0
         contig_only_print_scalar = 100
         dots_on_line = 0
+        success = 0
+        fail = 0
         for index, scaffold in enumerate(self.scaffolds):
             scaffold_name = self._make_scaffold_name(index+1, scaffold)
             ret.append('>' + scaffold_name + '\n')
@@ -492,13 +495,19 @@ class ProcessedAssembly:
                     dots_on_line += 1
                     sys.stdout.flush()
                 contig_counter += 1
-                seq += self.sequences[contig[0]] if contig[2] == '+' else self._reverse_complement(self.sequences[contig[0]])
+                try:
+                    seq += self.sequences[contig[0]] if contig[2] == '+' else self._reverse_complement(self.sequences[contig[0]])
+                    success += 1
+                except:
+                    print('Failed to add sequence for {0}'.format(contig[0]))
+                    fail += 1
                 if contig != scaffold[-1]:
                     seq += 'n' * self.gap_size
             ret += self._chunk_sequence(seq)
         ret[-1] = ret[-1].strip()
         if verbose and contig_counter % (10 * (contig_only_print_scalar if len(scaffold) == 1 else 1))  != 0 and contig_counter > 0:
             print('')
+        print('Success: {0} Fail {1}'.format(success, fail))
         return ret
 
     def agp(self):
@@ -634,6 +643,9 @@ class ProcessedAssembly:
             scaffold_length = 0
             for contig in scaffold:
                 scaffold_length += int(contig[1])
+                if 'fragment' in contig[0]:
+                    # correct off-by-one error in counting fragment lengths
+                    scaffold_length += 1
                 if contig != scaffold[-1]:
                     scaffold_length += self.gap_size
             scaffold_name = 'PGA_scaffold_{0}__{1}_contigs__length_{2}'.format(index,
