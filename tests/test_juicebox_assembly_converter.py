@@ -38,6 +38,7 @@ from juicebox_scripts.juicebox_assembly_converter import JuiceboxConverter, Proc
 
 from juicebox_scripts.juicebox_assembly_converter import InvalidFastaError, MissingFragmentError, \
     UnscaffoldedContigError, ZeroLengthContigError, BadContigNameError
+            
 
 class JuiceboxConverterTestCase(unittest.TestCase):
     def setUp(self):
