@@ -86,21 +86,21 @@ class JuiceboxPurgerTestCase(unittest.TestCase):
     def test_get_exclude_from_list(self):
         exclude_list = ["1", "2", "3"]
         expected_exclude = set(["1", "2", "3"])
-        self.assertEquals(get_exclude(exclude_list, None), expected_exclude)
+        self.assertEqual(get_exclude(exclude_list, None), expected_exclude)
 
     def test_get_exclude_with_duplicates(self):
         exclude_list = ["1", "2", "3", "1"]
         expected_exclude = set(["1", "2", "3"])
-        self.assertEquals(get_exclude(exclude_list, None), expected_exclude)
+        self.assertEqual(get_exclude(exclude_list, None), expected_exclude)
 
     def test_get_exclude_from_file(self):
         expected_exclude = set(["1", "2", "3"])
-        self.assertEquals(get_exclude(None, self.input_exclude_file), expected_exclude)
+        self.assertEqual(get_exclude(None, self.input_exclude_file), expected_exclude)
 
     def test_get_exclude_from_file_and_list(self):
         exclude_list = ["3", "4", "5"]
         expected_exclude = set(["1", "2", "3", "4", "5"])
-        self.assertEquals(get_exclude(exclude_list, self.input_exclude_file), expected_exclude)
+        self.assertEqual(get_exclude(exclude_list, self.input_exclude_file), expected_exclude)
 
 if __name__ == "__main__":
     unittest.main()

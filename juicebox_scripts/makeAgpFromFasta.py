@@ -42,6 +42,7 @@ def main():
 
     with open(fname) as file:
         with open(outfile, 'w') as outf:
+            outf.write("##agp-version 2.1\n")
             for line in file:
                 line = line.strip()
                 if isContigBinLine(line):
