@@ -282,8 +282,7 @@ class JuiceboxConverter:
                     if fragment_name.endswith(":::debris"):
 
                         nondebris_name = fragment_name.replace(":::debris", "")
-                        # -1 here because of some kind of slicing that .assembly format does...
-                        orig_len = len(sequences[nondebris_name]) - 1
+                        orig_len = len(sequences[nondebris_name])
                         print("WARNING: trying to map debris fragment {} to the whole"
                               " original contig. This contig may have been trashed in Juicebox. Lengths of orig and debris are {}, {}.".format(fragment_name, fragment_size, orig_len))
 
