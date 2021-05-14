@@ -204,7 +204,7 @@ class JuiceboxConverter:
                         raise MissingFragmentError('Assembly {0} is missing the sequence for index {1}'.format(assembly, len(assembly_map) + 1))
                     if int(tokens[2]) == 0:
                         raise ZeroLengthContigError('Assembly {0} lists contig {1} as zero length'.format(assembly, tokens[0]))
-                    assembly_map.append((tokens[0], str(int(tokens[2]) - 1)))
+                    assembly_map.append((tokens[0], str(int(tokens[2]))))
                     unscaffolded_contigs.append(tokens[0])
                 else:
                     if contig_mode:
