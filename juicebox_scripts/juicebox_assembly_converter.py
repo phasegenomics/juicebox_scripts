@@ -272,8 +272,8 @@ class JuiceboxConverter:
                 new_sequences[fragment_name] = sequences[orig_contig][sequence_offsets[orig_contig]:sequence_offsets[orig_contig]+fragment_size]
                 sequence_offsets[orig_contig] += fragment_size
                 if fragment_size != len(new_sequences[fragment_name]):
-                    print("WARNING: original contig {2} is {0} and fragment {3} length is {1}".format(
-                        fragment_size, len(new_sequences[fragment_name]), orig_contig, fragment_name))
+                    print("WARNING: fragment {0} is expected to be size {1} but is size {2}".format(fragment_name,
+                        fragment_size, len(new_sequences[fragment_name])))
             else:
                 if fragment_name not in sequences:
                     # new JB makes it possible to explicitly trash contigs and add the
