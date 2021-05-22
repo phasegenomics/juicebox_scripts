@@ -1,11 +1,11 @@
->contig_2_len_1 1 2
->contig_3_len_1 2 2
->contig_4_len_20 3 21
->contig_5_len_25 4 26
->contig_6_len_26 5 27
->contig_7_len_25 6 26
->contig_8_len_16 7 17
->contig_9_len_64 8 65
+>contig_2_len_1 1 1
+>contig_3_len_1 2 1
+>contig_4_len_20 3 20
+>contig_5_len_25 4 25
+>contig_6_len_26 5 26
+>contig_7_len_25 6 25
+>contig_8_len_16 7 16
+>contig_9_len_64 8 64
 -1 2
 3 4 -5
 -6
